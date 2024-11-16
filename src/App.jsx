@@ -1,10 +1,19 @@
-import "./index.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-green-200">
-      <h1 className="text-4xl font-bold text-blue-500">Hello, its Tailwind!</h1>
-    </div>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile/:id" element={<Profile />} />
+      </Routes>
+    </Router>
   );
 };
 
