@@ -1,15 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Feed from "../components/Feed";
-import { FiImage, FiPaperclip } from "react-icons/fi";
-import { randomPosts, users } from "../constants/";
 import Followers from "../components/Followers";
+import { FiImage, FiPaperclip } from "react-icons/fi";
+import { users } from "../constants";
 
 const Home = () => {
   const [postContent, setPostContent] = useState("");
   const [file, setFile] = useState(null);
-  const [posts, setPosts] = useState(randomPosts);
-  const [editingPost, setEditingPost] = useState(null);
+  const [posts, setPosts] = useState([]);
   const maxChars = 280;
+
+  // Fetch posts from the MongoDB database
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/posts");
+        setPosts(response.data); // Assuming API returns an array of posts
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   // Handle post content change
   const handleContentChange = (e) => {
@@ -21,47 +35,36 @@ const Home = () => {
   // Handle file selection
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    setFile(URL.createObjectURL(selectedFile));
-  };
-
-  // Handle post submission
-  const handlePostSubmit = () => {
-    if (postContent.trim() || file) {
-      if (editingPost !== null) {
-        // Update an existing post
-        setPosts((prevPosts) =>
-          prevPosts.map((post, index) =>
-            index === editingPost
-              ? { ...post, content: postContent, file }
-              : post
-          )
-        );
-        setEditingPost(null);
-      } else {
-        // Create a new post
-        const newPost = {
-          content: postContent,
-          file: file ? file : null,
-          timestamp: new Date(),
-        };
-        setPosts([newPost, ...posts]);
-      }
-      setPostContent("");
-      setFile(null);
+    if (selectedFile) {
+      setFile(selectedFile);
     }
   };
 
-  // Handle post edit
-  const handleEdit = (index) => {
-    const postToEdit = posts[index];
-    setPostContent(postToEdit.content);
-    setFile(postToEdit.file);
-    setEditingPost(index);
-  };
+  // Handle post submission
+  const handlePostSubmit = async () => {
+    if (postContent.trim() || file) {
+      const formData = new FormData();
+      formData.append("content", postContent);
+      if (file) formData.append("file", file);
 
-  // Handle post delete
-  const handleDelete = (index) => {
-    setPosts((prevPosts) => prevPosts.filter((_, i) => i !== index));
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/posts",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        setPosts([response.data, ...posts]); // Add new post to the top of the feed
+      } catch (error) {
+        console.error("Error creating post:", error);
+      }
+
+      setPostContent("");
+      setFile(null);
+    }
   };
 
   return (
@@ -195,7 +198,7 @@ const Home = () => {
             {file && (
               <div className="mt-4">
                 <img
-                  src={file}
+                  src={URL.createObjectURL(file)}
                   alt="Preview"
                   className="w-20 h-20 rounded-lg border border-gray-300 object-cover"
                 />
@@ -203,11 +206,7 @@ const Home = () => {
             )}
           </div>
 
-          <Feed
-            posts={posts}
-            onDeletePost={handleDelete}
-            onEditPost={handleEdit}
-          />
+          <Feed posts={posts} />
         </main>
 
         {/* Right Sidebar */}

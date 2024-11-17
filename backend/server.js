@@ -15,9 +15,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Import Routes
+// user Routes
 const userRoutes = require("./services/user-service/routes");
-app.use("/api/users", userRoutes); // Ensure this is correctly set up
+app.use("/api/users", userRoutes);
+
+// post Routes
+const postRoutes = require("./services/post-service/routes");
+app.use("/api/posts", postRoutes);
 
 // Default route
 app.get("/", (req, res) => {

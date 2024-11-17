@@ -12,9 +12,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
-        <Route path="/profile" element={<Profile />} /> {/* No userId here */}
-        <Route path="/profile/:userId" element={<ProfileCard />} />{" "}
-        {/* ProfileCard for followers */}
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:userId" element={<ProfileCard />} />
       </Routes>
     </Router>
   );

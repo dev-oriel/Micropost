@@ -6,9 +6,11 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchBar from "./SearchBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import { useUser } from "../context/UserContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useUser();
 
   const menuRef = useRef();
 
@@ -73,7 +75,8 @@ const Header = () => {
                 to="/profile"
                 className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
               >
-                <AccountCircleIcon /> Profile
+                <AccountCircleIcon />
+                {user ? `Hello, ${user.name}` : "Profile"}
               </Link>
             </li>
           </ul>
@@ -91,7 +94,7 @@ const Header = () => {
       {isMenuOpen && (
         <div
           className="absolute top-0 left-0 w-full bg-theme text-white z-40 shadow-lg md:hidden"
-          ref={menuRef} // Reference to track clicks outside this div
+          ref={menuRef}
         >
           <div className="container mx-auto flex justify-between items-center p-6">
             <h1 className="text-xl font-extrabold tracking-wide">
@@ -109,7 +112,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/"
-                  onClick={toggleMenu} // Closes the menu when an item is clicked
+                  onClick={toggleMenu}
                   className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
                 >
                   <HomeIcon /> Home
@@ -118,7 +121,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/auth"
-                  onClick={toggleMenu} // Closes the menu when an item is clicked
+                  onClick={toggleMenu}
                   className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
                 >
                   <LoginIcon /> Login
@@ -127,10 +130,11 @@ const Header = () => {
               <li>
                 <Link
                   to="/profile"
-                  onClick={toggleMenu} // Closes the menu when an item is clicked
+                  onClick={toggleMenu}
                   className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
                 >
-                  <AccountCircleIcon /> Profile
+                  <AccountCircleIcon />
+                  {user ? `Hello, ${user.name}` : "Profile"}
                 </Link>
               </li>
             </ul>

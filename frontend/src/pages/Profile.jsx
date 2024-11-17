@@ -1,38 +1,23 @@
 import { useState, useEffect } from "react";
-import { FaCamera } from "react-icons/fa"; 
-import profile1 from "../assets/images/profile1.jpg";
-
-const users = [
-  {
-    id: 1,
-    name: "Johnie Doe",
-    username: "john_doe",
-    email: "john.doe@example.com",
-    phone: "123-456-7890",
-    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    profileImage: profile1,
-    followers: 350,
-    posts: [
-      { id: 1, content: "My first post!", timestamp: "2024-11-17T12:00:00Z" },
-      {
-        id: 2,
-        content: "Loving the MicroPost platform!",
-        timestamp: "2024-11-18T14:30:00Z",
-      },
-    ],
-  },
-];
+import { FaCamera } from "react-icons/fa";
+import placeholderImage from "../assets/images/placeholder.jpg";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
 
+  // Simulate fetching data from an API
   useEffect(() => {
-    const currentUser = users.find((user) => user.id === 1);
-    setUser(currentUser);
+    const fetchUserData = async () => {
+      // Replace with your API endpoint
+      const response = await fetch("/api/user/1");
+      const data = await response.json();
+      setUser(data);
+    };
+
+    fetchUserData();
   }, []);
 
   const handleInputChange = (e) => {
@@ -46,26 +31,38 @@ const Profile = () => {
   const handleSaveChanges = () => {
     setIsEditing(false);
     setIsUpdated(true);
+
+    // Save changes (send to API)
+    fetch("/api/user/1", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    });
+
     setTimeout(() => setIsUpdated(false), 2000);
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const imageUrl = URL.createObjectURL(file);
       setUser((prevUser) => ({
         ...prevUser,
-        profileImage: URL.createObjectURL(file),
+        profileImage: imageUrl,
       }));
+
+      // Optionally upload the image to a server
+      // const formData = new FormData();
+      // formData.append("profileImage", file);
+      // fetch("/api/user/1/upload", {
+      //   method: "POST",
+      //   body: formData,
+      // });
     }
   };
 
-  const handleHover = () => {
-    setIsHovered(true);
-  };
-
-  const handleLeave = () => {
-    setIsHovered(false);
-  };
+  const handleHover = () => setIsHovered(true);
+  const handleLeave = () => setIsHovered(false);
 
   if (!user) {
     return <div>Loading...</div>;
@@ -82,26 +79,22 @@ const Profile = () => {
             onMouseLeave={handleLeave}
           >
             <img
-              src={user.profileImage}
+              src={user.profileImage || placeholderImage}
               alt={user.name}
               className="w-32 h-32 object-cover rounded-full border-4 border-theme-light"
             />
             {isHovered && (
               <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50 rounded-full">
-                <div className="text-white text-center">
-                  <div className="flex flex-col items-center">
-                    <label className="cursor-pointer">
-                      <FaCamera className="text-white text-2xl mb-2" />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                      />
-                    </label>
-                    <span className="text-xs">Change Image</span>
-                  </div>
-                </div>
+                <label className="cursor-pointer">
+                  <FaCamera className="text-white text-2xl mb-2" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+                <span className="text-xs text-white">Change Image</span>
               </div>
             )}
           </div>
@@ -113,7 +106,7 @@ const Profile = () => {
                 value={user.name}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className={`bg-transparent text-3xl font-semibold text-theme ${
+                className={`bg-transparent ${
                   isEditing ? "border-b-2 border-theme-light" : ""
                 }`}
               />
@@ -125,7 +118,7 @@ const Profile = () => {
                 value={user.username}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className={`bg-transparent text-lg text-theme-light ${
+                className={`bg-transparent ${
                   isEditing ? "border-b-2 border-theme-light" : ""
                 }`}
               />
@@ -177,7 +170,7 @@ const Profile = () => {
             disabled={!isEditing}
             className={`w-full p-4 rounded-lg border-2 ${
               isEditing ? "border-theme-light" : "border-gray-300"
-            } text-gray-600`}
+            }`}
             rows="4"
           />
         </div>
@@ -193,7 +186,7 @@ const Profile = () => {
         <div className="text-center">
           <button
             onClick={isEditing ? handleSaveChanges : () => setIsEditing(true)}
-            className="bg-theme text-white py-2 px-6 rounded-lg hover:bg-theme-light focus:outline-none focus:ring-2 focus:ring-theme mt-4"
+            className="bg-theme text-white py-2 px-6 rounded-lg hover:bg-theme-light"
           >
             {isEditing ? "Save Changes" : "Edit Profile"}
           </button>

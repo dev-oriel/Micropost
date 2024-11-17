@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { register, login } from "../services/authService";
+import { useUser } from "../context/UserContext";
 
 const AuthPage = () => {
+  const { login: setUser } = useUser();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const [resetEmail, setResetEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -21,6 +23,8 @@ const AuthPage = () => {
         const response = await login({ email, password });
         setMessage(response.message);
         console.log("Logged in user:", response.user);
+        setUser(response.user);
+        navigate("/");
       } catch (err) {
         setError(err.response?.data?.message || "Login failed.");
       }
