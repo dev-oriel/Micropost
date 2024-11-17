@@ -66,9 +66,9 @@ const Home = () => {
 
   return (
     <div className="flex justify-center pt-24 min-h-screen bg-gray-100">
-      <div className="w-11/12 lg:w-4/5 flex">
+      <div className="w-full lg:w-4/5 flex flex-col lg:flex-row">
         {/* Left Sidebar */}
-        <aside className="w-1/4 p-6 bg-white rounded-lg shadow-lg min-h-screen flex flex-col">
+        <aside className="w-full lg:w-1/4 p-6 bg-white rounded-lg shadow-lg min-h-screen flex flex-col mb-6 lg:mb-0">
           <div className="mb-6">
             <button className="w-full bg-theme text-white font-semibold py-2 rounded-lg hover:bg-theme-light transition duration-200">
               + Create Post
@@ -144,7 +144,7 @@ const Home = () => {
         </aside>
 
         {/* Main Feed */}
-        <main className="flex-1 max-w-[500px] mx-auto p-6 bg-white rounded-lg shadow-lg overflow-y-auto max-h-screen">
+        <main className="flex-1 max-w-full mx-auto p-6 bg-white rounded-lg shadow-lg overflow-y-auto max-h-screen">
           <h1 className="text-2xl font-bold mb-6 text-theme-dark">
             Welcome to MicroPost
           </h1>
@@ -211,7 +211,7 @@ const Home = () => {
         </main>
 
         {/* Right Sidebar */}
-        <aside className="w-1/4 p-6 bg-white rounded-lg shadow-lg overflow-y-auto min-h-screen flex flex-col">
+        <aside className="w-full lg:w-1/4 p-6 bg-white rounded-lg shadow-lg overflow-y-auto min-h-screen flex flex-col">
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-2">Trending Topics</h2>
             <ul className="space-y-3">
