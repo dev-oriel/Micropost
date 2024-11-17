@@ -5,26 +5,28 @@ const router = express.Router();
 // GET /api/posts - Fetch all posts
 router.get("/", async (req, res) => {
   try {
-    const posts = await Post.find().sort({ timestamp: -1 }); // Fetch all posts sorted by latest
+    const posts = await Post.find().sort({ timestamp: -1 }); // Sort by latest
     res.json(posts);
   } catch (error) {
+    console.error("Error fetching posts:", error);
     res.status(500).json({ error: "Error fetching posts" });
   }
 });
 
 // POST /api/posts - Create a new post
 router.post("/", async (req, res) => {
-  const { content, file, timestamp } = req.body;
+  const { content, file } = req.body;
 
   if (!content && !file) {
     return res.status(400).json({ error: "Content or file is required" });
   }
 
   try {
-    const newPost = new Post({ content, file, timestamp });
+    const newPost = new Post({ content, file });
     await newPost.save();
     res.status(201).json(newPost);
   } catch (error) {
+    console.error("Error creating post:", error);
     res.status(500).json({ error: "Error creating post" });
   }
 });
@@ -40,6 +42,7 @@ router.delete("/:id", async (req, res) => {
     }
     res.json({ message: "Post deleted" });
   } catch (error) {
+    console.error("Error deleting post:", error);
     res.status(500).json({ error: "Error deleting post" });
   }
 });

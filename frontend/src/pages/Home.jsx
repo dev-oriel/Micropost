@@ -39,6 +39,37 @@ const Home = () => {
       setFile(selectedFile);
     }
   };
+  const [currentUserId] = useState(1); // Assuming the current user's ID is 1
+  const [followers, setFollowers] = useState(users);
+
+  // Handle post deletion
+  const onDeletePost = async (postId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/posts/${postId}`);
+      setPosts(posts.filter((post) => post._id !== postId));
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  // Handle post editing
+  const onEditPost = async (postId, updatedContent) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/posts/${postId}`,
+        { content: updatedContent }
+      );
+      setPosts(
+        posts.map((post) =>
+          post._id === postId
+            ? { ...post, content: response.data.content }
+            : post
+        )
+      );
+    } catch (error) {
+      console.error("Error editing post:", error);
+    }
+  };
 
   // Handle post submission
   const handlePostSubmit = async () => {
@@ -206,7 +237,11 @@ const Home = () => {
             )}
           </div>
 
-          <Feed posts={posts} />
+          <Feed
+            posts={posts}
+            onDeletePost={onDeletePost}
+            onEditPost={onEditPost}
+          />
         </main>
 
         {/* Right Sidebar */}
@@ -226,7 +261,7 @@ const Home = () => {
             </ul>
           </div>
           <div className="flex-grow">
-            <Followers followers={users} />
+            <Followers followers={followers} currentUserId={currentUserId} />
           </div>
         </aside>
       </div>

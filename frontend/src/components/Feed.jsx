@@ -3,10 +3,9 @@ import { useState, useEffect, useRef } from "react";
 import { FiHeart, FiMoreHorizontal } from "react-icons/fi";
 import { FaUserCircle } from "react-icons/fa";
 
-// Utility to format timestamps
 const formatDate = (timestamp) => {
   const date = new Date(timestamp);
-  return date.toLocaleString(); // Formats as "MM/DD/YYYY, HH:MM:SS"
+  return date.toLocaleString();
 };
 
 const Feed = ({ posts, onDeletePost, onEditPost }) => {
@@ -25,7 +24,6 @@ const Feed = ({ posts, onDeletePost, onEditPost }) => {
     <div className="space-y-6">
       {posts.map((post, index) => (
         <div key={index} className="bg-white p-4 rounded-lg shadow-md relative">
-          {/* Top Bar with User Info and Options */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               <FaUserCircle className="text-3xl text-gray-500" />
@@ -36,7 +34,6 @@ const Feed = ({ posts, onDeletePost, onEditPost }) => {
                 <p className="text-sm text-gray-500">{post.name}</p>
               </div>
             </div>
-            {/* Options Menu */}
             <OptionsMenu
               onDelete={() => onDeletePost(index)}
               onEdit={() => {
@@ -46,7 +43,6 @@ const Feed = ({ posts, onDeletePost, onEditPost }) => {
             />
           </div>
 
-          {/* Post Content */}
           {isEditing === index ? (
             <div>
               <textarea
@@ -73,7 +69,6 @@ const Feed = ({ posts, onDeletePost, onEditPost }) => {
             </p>
           )}
 
-          {/* Post Image */}
           {post.file && !isEditing && (
             <div className="mb-4">
               <img
@@ -84,15 +79,12 @@ const Feed = ({ posts, onDeletePost, onEditPost }) => {
             </div>
           )}
 
-          {/* Post Timestamp */}
           <div className="text-xs text-gray-500 mb-4">
             {formatDate(post.timestamp)}
           </div>
 
-          {/* Like Button */}
           <LikeButton />
 
-          {/* Comment Section */}
           <CommentSection postId={index} />
         </div>
       ))}
@@ -100,7 +92,6 @@ const Feed = ({ posts, onDeletePost, onEditPost }) => {
   );
 };
 
-// Options Menu Component
 const OptionsMenu = ({ onDelete, onEdit }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef();
@@ -144,7 +135,6 @@ const OptionsMenu = ({ onDelete, onEdit }) => {
   );
 };
 
-// Like Button Component
 const LikeButton = () => {
   const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
@@ -167,7 +157,6 @@ const LikeButton = () => {
   );
 };
 
-// Comment Section Component
 const CommentSection = ({ postId }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -181,7 +170,6 @@ const CommentSection = ({ postId }) => {
 
   return (
     <div className="w-full">
-      {/* Comments List */}
       {comments.length > 0 && (
         <ul className="mb-2 space-y-2 text-sm text-gray-700">
           {comments.map((comment, index) => (
@@ -195,7 +183,6 @@ const CommentSection = ({ postId }) => {
         </ul>
       )}
 
-      {/* Add Comment */}
       <div className="flex items-center space-x-2 mt-4">
         <input
           type="text"
@@ -215,7 +202,6 @@ const CommentSection = ({ postId }) => {
   );
 };
 
-// PropTypes validation
 Feed.propTypes = {
   posts: PropTypes.arrayOf(
     PropTypes.shape({
@@ -229,11 +215,12 @@ Feed.propTypes = {
   onDeletePost: PropTypes.func.isRequired,
   onEditPost: PropTypes.func.isRequired,
 };
-// PropTypes for OptionsMenu
+
 OptionsMenu.propTypes = {
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
 };
+
 CommentSection.propTypes = {
   postId: PropTypes.number.isRequired,
 };

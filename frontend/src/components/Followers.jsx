@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import FollowButton from "./FollowButton";
 
-const Followers = ({ followers }) => {
+const Followers = ({ followers, currentUserId }) => {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-2">Suggestions for You</h2>
@@ -22,7 +22,12 @@ const Followers = ({ followers }) => {
                 {follower.name}
               </a>
             </div>
-            <FollowButton />
+            {/* Add FollowButton here */}
+            <FollowButton
+              followerId={currentUserId}
+              followeeId={follower.id}
+              isFollowing={follower.isFollowing}
+            />
           </li>
         ))}
       </ul>
@@ -37,8 +42,10 @@ Followers.propTypes = {
       id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
       profileImage: PropTypes.string.isRequired,
+      isFollowing: PropTypes.bool, // Track if the user is following this profile
     })
   ).isRequired,
+  currentUserId: PropTypes.number.isRequired, // Add current user id
 };
 
 export default Followers;
