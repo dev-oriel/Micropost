@@ -1,5 +1,24 @@
-const User = require("../../shared/models/User"); // Assuming you have a User model to handle the user data
+const User = require("../../shared/models/User"); 
 const mongoose = require("mongoose");
+const amqp = require("amqplib");
+
+// RabbitMQ setup
+let channel, connection;
+const queueName = "followQueue";
+
+// Connect to RabbitMQ
+async function connectRabbitMQ() {
+  try {
+    connection = await amqp.connect("amqp://localhost");
+    channel = await connection.createChannel();
+    await channel.assertQueue(queueName, { durable: true });
+    console.log("Connected to RabbitMQ and Queue is ready.");
+  } catch (error) {
+    console.error("Error connecting to RabbitMQ:", error);
+  }
+}
+
+connectRabbitMQ();
 
 // Follow a user
 const followUser = async (followerId, followingId) => {
@@ -12,6 +31,7 @@ const followUser = async (followerId, followingId) => {
       throw new Error("User not found");
     }
 
+    let action;
     // Check if the follower is already following the user
     if (follower.following.includes(followingId)) {
       // If already following, unfollow them
@@ -25,6 +45,8 @@ const followUser = async (followerId, followingId) => {
       // Decrease follower count
       following.followersCount -= 1;
       follower.followingCount -= 1;
+
+      action = "unfollow";
     } else {
       // If not following, add them to the following list
       await User.findByIdAndUpdate(followerId, {
@@ -37,11 +59,25 @@ const followUser = async (followerId, followingId) => {
       // Increase follower count
       following.followersCount += 1;
       follower.followingCount += 1;
+
+      action = "follow";
     }
 
     // Save both users after updates
     await follower.save();
     await following.save();
+
+    // Publish the follow/unfollow event to RabbitMQ
+    const followEvent = {
+      action,
+      followerId,
+      followingId,
+      timestamp: new Date(),
+    };
+
+    channel.sendToQueue(queueName, Buffer.from(JSON.stringify(followEvent)), {
+      persistent: true,
+    });
 
     return { success: true, message: "Follow status updated" };
   } catch (error) {
