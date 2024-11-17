@@ -41,7 +41,7 @@ const Header = () => {
             </li>
             <li>
               <Link
-                to="/profile/1"
+                to="/profile"
                 className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
               >
                 <AccountCircleIcon /> Profile

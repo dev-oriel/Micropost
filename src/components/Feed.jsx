@@ -10,7 +10,7 @@ const formatDate = (timestamp) => {
 };
 
 const Feed = ({ posts, onDeletePost, onEditPost }) => {
-  const [isEditing, setIsEditing] = useState(null); // Track which post is being edited
+  const [isEditing, setIsEditing] = useState(null);
   const [editedContent, setEditedContent] = useState("");
 
   const handleSaveEdit = (postId) => {
@@ -105,7 +105,6 @@ const OptionsMenu = ({ onDelete, onEdit }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef();
 
-  // Close the dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -220,11 +219,11 @@ const CommentSection = ({ postId }) => {
 Feed.propTypes = {
   posts: PropTypes.arrayOf(
     PropTypes.shape({
-      username: PropTypes.string, // Optional username with fallback
-      name: PropTypes.string, // Optional: Full name of the user
+      username: PropTypes.string,
+      name: PropTypes.string,
       content: PropTypes.string.isRequired,
       timestamp: PropTypes.string.isRequired,
-      file: PropTypes.string, // URL to the file or image
+      file: PropTypes.string,
     })
   ).isRequired,
   onDeletePost: PropTypes.func.isRequired,
@@ -236,7 +235,7 @@ OptionsMenu.propTypes = {
   onEdit: PropTypes.func.isRequired,
 };
 CommentSection.propTypes = {
-  postId: PropTypes.number.isRequired, // Add validation for postId
+  postId: PropTypes.number.isRequired,
 };
 
 export default Feed;

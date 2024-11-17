@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import Home from "./pages/Home";
 import Auth from "./pages/AuthPage";
 import Profile from "./pages/Profile";
+import ProfileCard from "./components/ProfileCard";
 
 const App = () => {
   return (
@@ -11,7 +12,9 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
-        <Route path="/profile/:userId" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} /> {/* No userId here */}
+        <Route path="/profile/:userId" element={<ProfileCard />} />{" "}
+        {/* ProfileCard for followers */}
       </Routes>
     </Router>
   );

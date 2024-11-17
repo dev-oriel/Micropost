@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Feed from "../components/Feed";
 import { FiImage, FiPaperclip } from "react-icons/fi";
-import { randomPosts, users } from "../constants/"; // Correct import
+import { randomPosts, users } from "../constants/";
 import Followers from "../components/Followers";
 
 const Home = () => {
@@ -9,7 +9,7 @@ const Home = () => {
   const [file, setFile] = useState(null);
   const [posts, setPosts] = useState(randomPosts);
   const [editingPost, setEditingPost] = useState(null);
-  const maxChars = 280; // Character limit
+  const maxChars = 280;
 
   // Handle post content change
   const handleContentChange = (e) => {
@@ -227,7 +227,6 @@ const Home = () => {
             </ul>
           </div>
           <div className="flex-grow">
-            {/* Pass the followers array here */}
             <Followers followers={users} />
           </div>
         </aside>

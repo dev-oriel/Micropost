@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { FaCamera } from "react-icons/fa"; 
 import profile1 from "../assets/images/profile1.jpg";
 
 const users = [
   {
     id: 1,
-    name: "John Doe",
+    name: "Johnie Doe",
     username: "john_doe",
     email: "john.doe@example.com",
     phone: "123-456-7890",
@@ -26,9 +27,10 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
-    // Fetching user data (for simplicity, we use a static user)
     const currentUser = users.find((user) => user.id === 1);
     setUser(currentUser);
   }, []);
@@ -44,7 +46,25 @@ const Profile = () => {
   const handleSaveChanges = () => {
     setIsEditing(false);
     setIsUpdated(true);
-    setTimeout(() => setIsUpdated(false), 2000); // Hide success message after 2 seconds
+    setTimeout(() => setIsUpdated(false), 2000);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUser((prevUser) => ({
+        ...prevUser,
+        profileImage: URL.createObjectURL(file),
+      }));
+    }
+  };
+
+  const handleHover = () => {
+    setIsHovered(true);
+  };
+
+  const handleLeave = () => {
+    setIsHovered(false);
   };
 
   if (!user) {
@@ -56,14 +76,60 @@ const Profile = () => {
       <div className="max-w-4xl mx-auto bg-white shadow-3xl rounded-lg p-8">
         {/* Profile Header */}
         <div className="flex items-center mb-8">
-          <img
-            src={user.profileImage}
-            alt={user.name}
-            className="w-32 h-32 object-cover rounded-full border-4 border-theme-light"
-          />
+          <div
+            className="relative"
+            onMouseEnter={handleHover}
+            onMouseLeave={handleLeave}
+          >
+            <img
+              src={user.profileImage}
+              alt={user.name}
+              className="w-32 h-32 object-cover rounded-full border-4 border-theme-light"
+            />
+            {isHovered && (
+              <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50 rounded-full">
+                <div className="text-white text-center">
+                  <div className="flex flex-col items-center">
+                    <label className="cursor-pointer">
+                      <FaCamera className="text-white text-2xl mb-2" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </label>
+                    <span className="text-xs">Change Image</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
           <div className="ml-6">
-            <h1 className="text-3xl font-semibold text-theme">{user.name}</h1>
-            <p className="text-lg text-theme-light">@{user.username}</p>
+            <h1 className="text-3xl font-semibold text-theme">
+              <input
+                type="text"
+                name="name"
+                value={user.name}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className={`bg-transparent text-3xl font-semibold text-theme ${
+                  isEditing ? "border-b-2 border-theme-light" : ""
+                }`}
+              />
+            </h1>
+            <p className="text-lg text-theme-light">
+              <input
+                type="text"
+                name="username"
+                value={user.username}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className={`bg-transparent text-lg text-theme-light ${
+                  isEditing ? "border-b-2 border-theme-light" : ""
+                }`}
+              />
+            </p>
             <p className="text-gray-600 mt-2">{user.followers} Followers</p>
           </div>
         </div>

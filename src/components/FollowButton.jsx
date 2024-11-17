@@ -4,7 +4,7 @@ const FollowButton = () => {
   const [isFollowing, setIsFollowing] = useState(false);
 
   const handleClick = () => {
-    setIsFollowing(!isFollowing); // Toggle the following state
+    setIsFollowing(!isFollowing); 
   };
 
   return (
