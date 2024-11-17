@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
+import Auth from "./pages/AuthPage";
 import Profile from "./pages/Profile";
 
 const App = () => {
@@ -10,8 +10,8 @@ const App = () => {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/profile/:userId" element={<Profile />} />
       </Routes>
     </Router>
   );
