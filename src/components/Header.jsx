@@ -10,22 +10,18 @@ import CloseIcon from "@mui/icons-material/Close";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Ref to track clicks outside the menu to close it
   const menuRef = useRef();
 
-  // Toggle the menu open/close state
   const toggleMenu = () => {
     setIsMenuOpen((prevState) => !prevState);
   };
 
-  // Close the menu if user clicks outside of it
   const closeMenuOnOutsideClick = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       setIsMenuOpen(false);
     }
   };
 
-  // Attach event listener for clicks outside of the menu when it's open
   useEffect(() => {
     if (isMenuOpen) {
       document.addEventListener("mousedown", closeMenuOnOutsideClick);
@@ -33,7 +29,6 @@ const Header = () => {
       document.removeEventListener("mousedown", closeMenuOnOutsideClick);
     }
 
-    // Cleanup event listener when component unmounts or state changes
     return () => {
       document.removeEventListener("mousedown", closeMenuOnOutsideClick);
     };
@@ -144,7 +139,7 @@ const Header = () => {
       )}
 
       {/* Mobile SearchBar */}
-      <div className="block md:hidden absolute bottom-2 w-full px-4">
+      <div className="block md:hidden absolute w-full px-4">
         <SearchBar />
       </div>
     </header>

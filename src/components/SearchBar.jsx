@@ -22,7 +22,7 @@ const SearchBar = () => {
       />
       <button
         type="submit"
-        className="bg-theme hover:bg-theme-dark text-white font-semibold px-4 py-2 rounded-full transition-all mt-2 sm:mt-0 sm:ml-2"
+        className="bg-theme hover:bg-theme-dark text-white font-semibold px-4 py-2 rounded-full transition-all sm:mt-0 sm:ml-2"
       >
         Search
       </button>
