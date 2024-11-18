@@ -1,5 +1,4 @@
-const User = require("../../shared/models/User"); 
-const mongoose = require("mongoose");
+const User = require("../../shared/models/User");
 const amqp = require("amqplib");
 
 // RabbitMQ setup
@@ -15,9 +14,11 @@ async function connectRabbitMQ() {
     console.log("Connected to RabbitMQ and Queue is ready.");
   } catch (error) {
     console.error("Error connecting to RabbitMQ:", error);
+    setTimeout(connectRabbitMQ, 5000); // Try reconnecting after 5 seconds if failed
   }
 }
 
+// Initial connection to RabbitMQ
 connectRabbitMQ();
 
 // Follow a user
@@ -86,5 +87,5 @@ const followUser = async (followerId, followingId) => {
   }
 };
 
-// Export the function to be used in your routes
+// Export the function to be used in routes
 module.exports = { followUser };

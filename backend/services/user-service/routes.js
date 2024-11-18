@@ -1,7 +1,8 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../../shared/models/models.js");
+const User = require("../../shared/models/User");
+const { publishUserEvent } = require("./user-service");
 const router = express.Router();
 
 // Secret key for JWT
@@ -24,6 +25,13 @@ router.post("/register", async (req, res) => {
 
     const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
+
+    // Publish user registration event to RabbitMQ
+    publishUserEvent("user_registered", {
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+    });
 
     // Return user object with userId (which is the MongoDB _id)
     res.status(201).json({
@@ -55,6 +63,13 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+
+    // Publish user login event to RabbitMQ
+    publishUserEvent("user_logged_in", {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    });
 
     res.status(200).json({
       message: "User logged in successfully.",
