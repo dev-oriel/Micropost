@@ -1,10 +1,17 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
+
+    if (!query.trim()) return;
+
+    navigate(`/search?query=${query}`);
+
     console.log("Search query:", query);
   };
 
