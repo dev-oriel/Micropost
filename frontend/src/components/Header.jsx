@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchBar from "./SearchBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import { useUser } from "../context/UserContext";
+import { useUser } from "../context/UserContext"; // Correctly importing the custom hook
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user } = useUser();
-
+  const { user, logout } = useUser(); // Use the context hook to access user and logout function
+  const navigate = useNavigate();
   const menuRef = useRef();
 
   const toggleMenu = () => {
@@ -35,6 +36,11 @@ const Header = () => {
       document.removeEventListener("mousedown", closeMenuOnOutsideClick);
     };
   }, [isMenuOpen]);
+
+  const handleLogout = () => {
+    logout(); // Call logout from context
+    navigate("/auth"); // Redirect to login page after logout
+  };
 
   return (
     <header className="bg-theme text-white h-20 fixed top-0 left-0 w-full z-50 shadow-lg flex items-center">
@@ -62,14 +68,25 @@ const Header = () => {
                 <HomeIcon /> Home
               </Link>
             </li>
-            <li>
-              <Link
-                to="/auth"
-                className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
-              >
-                <LoginIcon /> Login
-              </Link>
-            </li>
+            {user ? (
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
+                >
+                  <LogoutIcon /> Logout
+                </button>
+              </li>
+            ) : (
+              <li>
+                <Link
+                  to="/auth"
+                  className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
+                >
+                  <LoginIcon /> Login
+                </Link>
+              </li>
+            )}
             <li>
               <Link
                 to="/profile"
@@ -118,15 +135,29 @@ const Header = () => {
                   <HomeIcon /> Home
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/auth"
-                  onClick={toggleMenu}
-                  className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
-                >
-                  <LoginIcon /> Login
-                </Link>
-              </li>
+              {user ? (
+                <li>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      toggleMenu();
+                    }}
+                    className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
+                  >
+                    <LogoutIcon /> Logout
+                  </button>
+                </li>
+              ) : (
+                <li>
+                  <Link
+                    to="/auth"
+                    onClick={toggleMenu}
+                    className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
+                  >
+                    <LoginIcon /> Login
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link
                   to="/profile"

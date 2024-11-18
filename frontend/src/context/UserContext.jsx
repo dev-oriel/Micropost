@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { createContext, useState, useContext } from "react";
 
 const UserContext = createContext();
@@ -16,8 +17,8 @@ export const UserProvider = ({ children }) => {
   });
 
   const login = (userData) => {
-    setUser(userData); // Store the user data on login
-    localStorage.setItem("user", JSON.stringify(userData)); // Optionally store in localStorage
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const logout = () => {
@@ -30,4 +31,9 @@ export const UserProvider = ({ children }) => {
       {children}
     </UserContext.Provider>
   );
+};
+
+// Add prop type validation
+UserProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

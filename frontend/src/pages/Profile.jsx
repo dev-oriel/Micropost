@@ -1,24 +1,39 @@
 import { useState, useEffect } from "react";
 import { FaCamera } from "react-icons/fa";
 import placeholderImage from "../assets/images/placeholder.jpg";
+import { useUser } from "../context/UserContext"; // Import the user context
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const { user: contextUser, login } = useUser(); // Access user data and login function
+  const [user, setUser] = useState(null); // Local state for user
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Simulate fetching data from an API
+  // Fetch user data from the API
   useEffect(() => {
+    if (!contextUser || !contextUser.id) {
+      console.error("User context is missing or invalid");
+      return;
+    }
+
     const fetchUserData = async () => {
-      // Replace with your API endpoint
-      const response = await fetch("/api/user/1");
-      const data = await response.json();
-      setUser(data);
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/user/${contextUser.id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+        const data = await response.json();
+        setUser(data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
     };
 
     fetchUserData();
-  }, []);
+  }, [contextUser]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -28,21 +43,36 @@ const Profile = () => {
     }));
   };
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = async () => {
+    if (!contextUser?.id) return;
+
     setIsEditing(false);
     setIsUpdated(true);
 
-    // Save changes (send to API)
-    fetch("/api/user/1", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    });
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/user/${contextUser.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user),
+        }
+      );
 
-    setTimeout(() => setIsUpdated(false), 2000);
+      if (!response.ok) {
+        throw new Error("Failed to update user");
+      }
+
+      // Update the context with the new user data
+      login(user);
+
+      setTimeout(() => setIsUpdated(false), 2000);
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
@@ -51,10 +81,10 @@ const Profile = () => {
         profileImage: imageUrl,
       }));
 
-      // Optionally upload the image to a server
+      // Upload the image to the server (uncomment to use)
       // const formData = new FormData();
       // formData.append("profileImage", file);
-      // fetch("/api/user/1/upload", {
+      // await fetch(`http://localhost:5000/api/user/${contextUser.id}/upload`, {
       //   method: "POST",
       //   body: formData,
       // });
@@ -64,8 +94,14 @@ const Profile = () => {
   const handleHover = () => setIsHovered(true);
   const handleLeave = () => setIsHovered(false);
 
+  if (!contextUser) {
+    return (
+      <div className="text-center">Please log in to view your profile.</div>
+    );
+  }
+
   if (!user) {
-    return <div>Loading...</div>;
+    return <div className="text-center">Loading...</div>;
   }
 
   return (

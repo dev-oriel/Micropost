@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const profileRoutes = require("./services/profile");
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,8 @@ app.use("/api/users", userRoutes);
 const postRoutes = require("./services/post-service/routes");
 app.use("/api/posts", postRoutes);
 
+app.use("/api/profile", profileRoutes);
+
 // Default route
 app.get("/", (req, res) => {
   res.send("Micropost Backend is Running");
@@ -31,4 +34,3 @@ app.get("/", (req, res) => {
 // Set the port
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
