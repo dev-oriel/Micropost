@@ -9,7 +9,7 @@ const Home = () => {
   const [postContent, setPostContent] = useState("");
   const [file, setFile] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [followers, setFollowers] = useState(users); // Mock followers data
+  const [followers, setFollowers] = useState(users); 
   const [currentUserId] = useState(1); // Assuming the current user's ID is 1
   const maxChars = 280;
 

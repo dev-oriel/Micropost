@@ -1,16 +1,17 @@
 const express = require("express");
 const cors = require("cors");
 const userRoutes = require("./routes");
+const randomRoutes = require("./random");
 require("dotenv").config();
 
 const app = express();
 
-// Enable CORS for all domains (you can specify domains if needed)
+// Enable CORS
 app.use(
   cors({
-    origin: "*", // Allows all origins
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -18,10 +19,11 @@ app.use(
 app.use(express.json());
 
 // Use `/api` as the base path for user routes
-app.use("/api", userRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/random", randomRoutes);
 
 // Start the server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );

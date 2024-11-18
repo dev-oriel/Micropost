@@ -1,18 +1,24 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../../shared/models/User.js"); // Directly import User model
+const User = require("../../shared/models/User.js");
 const { publishUserEvent } = require("./user-service.js");
 const router = express.Router();
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 // Secret key for JWT
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // User Registration
 router.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
-  if (!username || !email || !password) {
-    return res.status(400).json({ message: "All fields are required." });
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ message: "Email and password are required." });
   }
 
   try {
@@ -22,18 +28,23 @@ router.post("/register", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      username: `user${Date.now()}`,
+      bio: "",
+      profilePicture: "placeholder.jpg",
+      phone: "",
+    });
 
-    const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
 
-    // Publish user registration event to RabbitMQ
     publishUserEvent("user_registered", {
       id: newUser._id,
       username: newUser.username,
       email: newUser.email,
     });
 
-    // Return user object with userId (which is the MongoDB _id)
     res.status(201).json({
       message: "User registered successfully.",
       user: {
@@ -51,6 +62,7 @@ router.post("/register", async (req, res) => {
 // User Login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
     return res.status(400).json({ message: "All fields are required." });
   }
@@ -68,7 +80,6 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
 
-    // Publish user login event to RabbitMQ
     publishUserEvent("user_logged_in", {
       id: user._id,
       username: user.username,

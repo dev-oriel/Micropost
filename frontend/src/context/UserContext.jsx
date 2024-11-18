@@ -16,10 +16,11 @@ export const UserProvider = ({ children }) => {
     }
   });
 
-    
-  
-
   const login = (userData) => {
+    if (!userData || !userData.id) {
+      console.error("Invalid user data provided for login.");
+      return;
+    }
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
   };
@@ -36,7 +37,6 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-// Add prop type validation
 UserProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };

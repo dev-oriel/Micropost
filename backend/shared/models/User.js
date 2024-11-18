@@ -6,8 +6,8 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, trim: true },
     password: { type: String, required: true },
     bio: { type: String, default: "" },
-    profilePicture: { type: String, default: "placeholder.jpg" }, // Updated default image
-    phone: { type: String, default: "" }, // Optional field for phone
+    profilePicture: { type: String, default: "placeholder.jpg" },
+    phone: { type: String, default: "" },
     followers: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema(
     followingCount: { type: Number, default: 0 },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
+    name: { type: String, default: () => `name_${Date.now()}` }, // Dynamic default
   },
   { timestamps: true }
 );

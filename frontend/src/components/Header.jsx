@@ -93,7 +93,7 @@ const Header = () => {
                 className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
               >
                 <AccountCircleIcon />
-                {user ? `Hello, ${user.name}` : "Profile"}
+                {user ? `${user.name || user.username || "User"}` : "Profile"}
               </Link>
             </li>
           </ul>
@@ -165,7 +165,7 @@ const Header = () => {
                   className="text-white text-lg font-medium flex items-center gap-2 hover:text-theme-light transition-colors duration-200"
                 >
                   <AccountCircleIcon />
-                  {user ? `Hello, ${user.name}` : "Profile"}
+                  {user ? `${user.name || user.username || "User"}` : "Profile"}
                 </Link>
               </li>
             </ul>
