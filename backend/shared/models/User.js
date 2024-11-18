@@ -1,23 +1,36 @@
-const User = require("../../models/User");
+const mongoose = require("mongoose");
 
-// Example of creating a new user
-async function createUser(req, res) {
-  try {
-    const { username, email, password } = req.body;
+const UserSchema = new mongoose.Schema(
+  {
+    username: { type: String, required: true, unique: true, trim: true },
+    email: { type: String, required: true, unique: true, trim: true },
+    password: { type: String, required: true },
+    bio: { type: String, default: "" },
+    profilePicture: { type: String, default: "placeholder.jpg" }, // Updated default image
+    phone: { type: String, default: "" }, // Optional field for phone
+    followers: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+    following: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+    followersCount: { type: Number, default: 0 },
+    followingCount: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+  },
+  { timestamps: true }
+);
 
-    // Check if the user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+// Middleware to ensure updatedAt is set
+UserSchema.pre("save", function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
-    const newUser = new User({ username, email, password });
-    await newUser.save();
-
-    res
-      .status(201)
-      .json({ message: "User created successfully", user: newUser });
-  } catch (err) {
-    res.status(500).json({ message: "Error creating user", error: err });
-  }
-}
+// Export the User model
+module.exports = mongoose.models.User || mongoose.model("User", UserSchema);

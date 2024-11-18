@@ -1,8 +1,8 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../../shared/models/User");
-const { publishUserEvent } = require("./user-service");
+const User = require("../../shared/models/User.js"); // Directly import User model
+const { publishUserEvent } = require("./user-service.js");
 const router = express.Router();
 
 // Secret key for JWT
@@ -10,8 +10,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // User Registration
 router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
     return res.status(400).json({ message: "All fields are required." });
   }
 
@@ -23,20 +23,24 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ name, email, password: hashedPassword });
+    const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
 
     // Publish user registration event to RabbitMQ
     publishUserEvent("user_registered", {
       id: newUser._id,
-      name: newUser.name,
+      username: newUser.username,
       email: newUser.email,
     });
 
     // Return user object with userId (which is the MongoDB _id)
     res.status(201).json({
       message: "User registered successfully.",
-      user: { id: newUser._id, name: newUser.name, email: newUser.email },
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+      },
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -67,14 +71,14 @@ router.post("/login", async (req, res) => {
     // Publish user login event to RabbitMQ
     publishUserEvent("user_logged_in", {
       id: user._id,
-      name: user.name,
+      username: user.username,
       email: user.email,
     });
 
     res.status(200).json({
       message: "User logged in successfully.",
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: { id: user._id, username: user.username, email: user.email },
     });
   } catch (error) {
     console.error("Login error:", error);

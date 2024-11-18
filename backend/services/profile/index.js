@@ -1,5 +1,6 @@
 const express = require("express");
-const User = require("../../shared/models/models");
+const User = require("../../shared/models/User");
+const mongoose = require("mongoose");
 const router = express.Router();
 
 // Middleware to validate userId

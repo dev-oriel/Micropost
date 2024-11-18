@@ -45,7 +45,18 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // Max 5MB
 });
 
-// POST /api/posts - Create a new post
+// **GET /api/posts** - Fetch all posts
+router.get("/", async (req, res) => {
+  try {
+    const posts = await Post.find().sort({ createdAt: -1 }); // Sort by newest first
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ error: "Error fetching posts" });
+  }
+});
+
+// **POST /api/posts** - Create a new post
 router.post("/", upload.single("file"), async (req, res) => {
   const { content } = req.body;
   const file = req.file;

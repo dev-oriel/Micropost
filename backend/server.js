@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
-const profileRoutes = require("./services/profile");
+const profileRoutes = require("./services/profile/index");
 
 // Load environment variables
 dotenv.config();
@@ -16,15 +16,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// user Routes
+// User Routes
 const userRoutes = require("./services/user-service/routes");
 app.use("/api/users", userRoutes);
 
-// post Routes
+// Post Routes
 const postRoutes = require("./services/post-service/routes");
 app.use("/api/posts", postRoutes);
 
-app.use("/api/profile", profileRoutes);
+app.use("/api/user", profileRoutes);
 
 // Default route
 app.get("/", (req, res) => {

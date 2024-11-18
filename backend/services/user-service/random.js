@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../../shared/models/User"); // Ensure this path is correct
+const User = require("../../shared/models/User");
 
 // Endpoint to fetch random users
 router.get("/random-users", async (req, res) => {
